@@ -209,6 +209,10 @@
         src="https://static-index-4gtuqm3bfa95c963-1304825656.tcloudbaseapp.com/official-website/favicon.svg" />
       <div style="display: inline; margin-bottom: 48px" class="title-text">欢迎使用微信云托管</div>
     </div>
+    <div class="reminder-status-display" style="margin-top: 16px; display: flex; align-items: center;">
+      <span class="status-icon" style="width: 20px; height: 20px; margin-right: 8px; border-radius: 50%; background-color: #ccc;"></span>
+      <span class="status-text">喝水提醒：<span class="reminder-status-text"></span></span>
+    </div>
     <div style="text-align: center; display: flex; flex-direction: column; align-items: center; margin: 0">
       <span class="count-text">
         <span style="margin-right: 16px;">当前计数:</span>
@@ -272,6 +276,7 @@
   integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 <script>
   init();
+  updateReminderStatus();
   function init() {
     $.ajax("/api/count", {
       method: "get",
@@ -295,6 +300,23 @@
       }
     });
   }
+  function updateReminderStatus() {
+    $.ajax({
+        url: "/api/reminder_status",
+        method: "GET",
+        dataType: "json"
+    }).done(function(res) {
+        if (res && res.data && res.data.enabled!== undefined) {
+            const isEnabled = res.data.enabled;
+            const statusText = isEnabled? "已开启" : "已关闭";
+            const statusColor = isEnabled? "#07c160" : "#ccc";
+            $(".reminder-status-text").text(statusText);
+            $(".status-icon").css("background-color", statusColor);
+        }
+    }).fail(function() {
+        console.error("获取喝水提醒状态失败");
+    });
+}
 </script>
 
 </html>

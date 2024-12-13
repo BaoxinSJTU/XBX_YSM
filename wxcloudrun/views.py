@@ -5,17 +5,26 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from wxcloudrun.models import Counters
 from django.views.decorators.csrf import csrf_exempt
+from wxcloudrun.models import ReminderStatus
 
 logger = logging.getLogger('log')
 
 @csrf_exempt
 def set_reminder_status(request):
-    if request.method == "POST":
+    if request.method == "GET":
+        try:
+            reminder_status = ReminderStatus.objects.first()
+            enabled = reminder_status.reminder_enabled if reminder_status else False
+            return JsonResponse({"data": {"enabled": enabled}})
+        except Exception as e:
+            return JsonResponse({"error": "服务器错误"}, status=500)
+    elif request.method == "POST":
         enabled = request.POST.get('enabled')
         if enabled is not None:
-            is_enabled = bool(enabled)  # 将获取到的值转换为布尔类型
-            # 这里可以添加代码将这个状态保存到数据库等操作，比如关联到用户配置表中
-            # 暂时只是模拟操作，无实际保存逻辑
+            is_enabled = bool(enabled)
+            reminder_status, created = ReminderStatus.objects.get_or_create()
+            reminder_status.reminder_enabled = is_enabled
+            reminder_status.save()
             return JsonResponse({"message": "喝水提醒状态已成功设置"})
         return JsonResponse({"error": "缺少enabled参数"}, status=400)
     return JsonResponse({"error": "请使用POST方法请求"}, status=405)
