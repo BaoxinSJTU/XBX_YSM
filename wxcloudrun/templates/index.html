@@ -313,6 +313,10 @@
             $(".reminder-status-text").text(statusText);
             $(".status-icon").css("background-color", statusColor);
         }
+        else{
+          $(".reminder-status-text").text("为获取到状态");
+            $(".status-icon").css("background-color", "#ccc");
+        }
     }).fail(function() {
         console.error("获取喝水提醒状态失败");
     });
