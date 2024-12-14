@@ -303,8 +303,7 @@
     });
   }
   function updateReminderStatus() {
-    $.ajax({
-        url: "/api/reminder_status",
+    $.ajax("/api/reminder_status", {
         method: "GET",
         dataType: "json"
     }).done(function(res) {
