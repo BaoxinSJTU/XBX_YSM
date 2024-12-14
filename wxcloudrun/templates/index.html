@@ -199,6 +199,23 @@
       color: rgba(0, 0, 0, 0.55);
       letter-spacing: 0;
     }
+    .btn_updateReminderStatus {
+            transition: background-color 0.3s;
+            cursor: pointer;
+            padding: 10px 20px;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+    }
+    .status-display-box {
+        margin-top: 16px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        width: 200px;
+        text-align: center;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+    }
   </style>
 </head>
 
@@ -209,12 +226,11 @@
         src="https://static-index-4gtuqm3bfa95c963-1304825656.tcloudbaseapp.com/official-website/favicon.svg" />
       <div style="display: inline; margin-bottom: 48px" class="title-text">欢迎使用微信云托管</div>
     </div>
-    <div class="reminder-status-display" style="margin-top: 16px; display: flex; align-items: center;">
-      <span class="status-icon" style="width: 20px; height: 20px; margin-right: 8px; border-radius: 50%; background-color: #ccc;"></span>
-      <span class="status-text">喝水提醒：<span class="reminder-status-text"></span></span>
-      <a class="btn btn_updateRemainderStatus" style="background: #07c160; border: 0"
-        onclick="updateReminderStatus()">更新喝水状态</a>
-    </div>
+    <div class="reminder-status-container" style="margin: 20px;">
+      <button class="btn btn-success btn-lg btn_updateReminderStatus" style="background: #07c160; border: 0"
+              onclick="updateReminderStatus()">更新喝水状态</button>
+      <div class="status-display-box">当前状态：<span class="status-display-text">未获取到状态</span></div>
+  </div>
     <div style="text-align: center; display: flex; flex-direction: column; align-items: center; margin: 0">
       <span class="count-text">
         <span style="margin-right: 16px;">当前计数:</span>
@@ -303,26 +319,50 @@
     });
   }
   function updateReminderStatus() {
+    // 获取按钮和状态显示框元素
+    var button = $(".btn_updateReminderStatus");
+    var statusDisplayText = $(".status-display-text");
+
+    // 在请求前禁用按钮并设置半透明表示正在加载
+    button.prop("disabled", true);
+    button.css("opacity", "0.6");
+
     $.ajax("/api/reminder_status", {
         method: "GET",
         dataType: "json"
     }).done(function(res) {
-      $(".btn_updateRemainderStatus").css("background", "#07c160");
-        if (res && res.data && res.data.enabled!== undefined) {
+        if (res && res.data && res.data.enabled !== undefined) {
             const isEnabled = res.data.enabled;
-            const statusText = isEnabled? "已开启" : "已关闭";
-            const statusColor = isEnabled? "#07c160" : "#ccc";
-            $(".reminder-status-text").text(statusText);
-            $(".status-icon").css("background-color", statusColor);
+            const statusText = isEnabled ? "已开启" : "已关闭";
+
+            // 更新状态显示文本
+            statusDisplayText.text(statusText);
+
+            // 反转按钮颜色
+            const currentColor = button.css("background-color");
+            const newColor = isEnabled ? "#ccc" : "#07c160"; // 绿色 ↔ 灰色
+            button.css("background-color", newColor);
         }
         else{
-          $(".reminder-status-text").text("为获取到状态");
-            $(".status-icon").css("background-color", "#ccc");
+            statusDisplayText.text("未获取到状态");
+            // 设置按钮为默认颜色
+            button.css("background-color", "#07c160");
         }
     }).fail(function() {
         console.error("获取喝水提醒状态失败");
+        statusDisplayText.text("请求失败");
+        // 设置按钮为灰色表示失败
+        button.css("background-color", "#ccc");
+    }).always(function() {
+        // 无论成功或失败，都重新启用按钮并恢复不透明度
+        button.prop("disabled", false);
+        button.css("opacity", "1");
     });
 }
+// 可选：在页面加载时获取当前状态并初始化UI
+$(document).ready(function() {
+            updateReminderStatus();
+        });
 </script>
 
 </html>
