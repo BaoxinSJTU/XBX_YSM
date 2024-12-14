@@ -11,13 +11,19 @@ logger = logging.getLogger('log')
 
 @csrf_exempt
 def set_reminder_status(request):
+    rsp = JsonResponse({'code': 0, 'errorMsg': ''}, json_dumps_params={'ensure_ascii': False})
+    
     if request.method == "GET" or request.method == 'get':
-        try:
-            # reminder_status = ReminderStatus.objects.first()
-            # enabled = reminder_status.reminder_enabled if reminder_status else False
-            return JsonResponse({"data": {"enabled": enabled}})
-        except Exception as e:
-            return JsonResponse({"error": "服务器错误"}, status=500)
+        rsp = JsonResponse({'code': 0, 'data': {
+            "enabled" : True,
+        }},
+                    json_dumps_params={'ensure_ascii': False})
+        # try:
+        #     # reminder_status = ReminderStatus.objects.first()
+        #     # enabled = reminder_status.reminder_enabled if reminder_status else False
+        #     return JsonResponse({"data": {"enabled": enabled}})
+        # except Exception as e:
+        #     return JsonResponse({"error": "服务器错误"}, status=500)
     elif request.method == "POST":
         enabled = request.POST.get('enabled')
         if enabled is not None:
@@ -27,7 +33,7 @@ def set_reminder_status(request):
             reminder_status.save()
             return JsonResponse({"message": "喝水提醒状态已成功设置"})
         return JsonResponse({"error": "缺少enabled参数"}, status=400)
-    return JsonResponse({"error": "请使用POST方法请求"}, status=405)
+    return rsp
 def index(request, _):
     """
     获取主页
