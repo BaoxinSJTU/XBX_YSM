@@ -11,10 +11,10 @@ logger = logging.getLogger('log')
 
 @csrf_exempt
 def set_reminder_status(request):
-    if request.method == "GET":
+    if request.method == "GET" or request.method == 'get':
         try:
-            reminder_status = ReminderStatus.objects.first()
-            enabled = reminder_status.reminder_enabled if reminder_status else False
+            # reminder_status = ReminderStatus.objects.first()
+            # enabled = reminder_status.reminder_enabled if reminder_status else False
             return JsonResponse({"data": {"enabled": enabled}})
         except Exception as e:
             return JsonResponse({"error": "服务器错误"}, status=500)
