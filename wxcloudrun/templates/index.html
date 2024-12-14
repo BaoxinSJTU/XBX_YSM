@@ -212,7 +212,7 @@
     <div class="reminder-status-display" style="margin-top: 16px; display: flex; align-items: center;">
       <span class="status-icon" style="width: 20px; height: 20px; margin-right: 8px; border-radius: 50%; background-color: #ccc;"></span>
       <span class="status-text">喝水提醒：<span class="reminder-status-text"></span></span>
-      <a class="btn btn-success btn-lg" style="background: #07c160; border: 0"
+      <a class="btn_updateRemainderStatus" style="background: #07c160; border: 0"
         onclick="updateReminderStatus()">更新喝水状态</a>
     </div>
     <div style="text-align: center; display: flex; flex-direction: column; align-items: center; margin: 0">
@@ -307,6 +307,7 @@
         method: "GET",
         dataType: "json"
     }).done(function(res) {
+      $(".btn_updateRemainderStatus").css("background", "#07c160");
         if (res && res.data && res.data.enabled!== undefined) {
             const isEnabled = res.data.enabled;
             const statusText = isEnabled? "已开启" : "已关闭";
