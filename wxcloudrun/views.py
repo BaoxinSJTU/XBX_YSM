@@ -9,8 +9,7 @@ from wxcloudrun.models import ReminderStatus
 
 logger = logging.getLogger('log')
 
-@csrf_exempt
-def set_reminder_status(request):
+def set_reminder_status(request, _):
     rsp = JsonResponse({'code': 0, 'errorMsg': ''}, json_dumps_params={'ensure_ascii': False})
     
     if request.method == "GET" or request.method == 'get':

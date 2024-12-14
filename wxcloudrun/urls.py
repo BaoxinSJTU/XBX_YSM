@@ -24,5 +24,5 @@ urlpatterns = (
     # 获取主页
     url(r'(/)?$', views.index),
      # 喝水提醒状态设置接口（POST请求）
-    url(r'^api/reminder_status(/)?$', views.set_reminder_status)
+    url(r'^^api/reminder_status(/)?$', views.set_reminder_status)
 )
